@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ophelia-ci-interface-deployment
+spec:
+  template:
+    metadata:
+      name: ophelia-ci-interface
+      labels:
+        app: ophelia-ci-interface
+    spec:
+      containers:
+      - name: ophelia-ci-interface
+        image: edmilsonrodrigues/ophelia-ci-interface:1.0.0
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: ophelia-ci-config-map
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          periodSeconds: 10
+          initialDelaySeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          periodSeconds: 10
+          initialDelaySeconds: 10
+        resources:
+          requests:
+            cpu: 10m
+  selector:
+    matchLabels:
+      app: ophelia-ci-interface

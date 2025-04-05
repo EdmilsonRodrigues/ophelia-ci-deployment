@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ophelia-ci-server-stateful
+spec:
+  serviceName: ophelia-ci-server-service
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ophelia-ci-server
+  template:
+    metadata:
+      labels:
+        app: ophelia-ci-server
+    spec:
+      containers:
+        - name: ophelia-ci-server
+          image: edmilsonrodrigues/ophelia-ci-server:1.0.0
+          ports:
+          - containerPort: 50051
+          volumeMounts:
+          - name: ophelia-repos-volume
+            mountPath: /var/lib/ophelia
+          envFrom:
+          - configMapRef:
+              name: ophelia-ci-config-map
+      volumes:
+      - name: ophelia-repos-volume
+        hostPath:
+          path: /mnt/repos
+          type: DirectoryOrCreate

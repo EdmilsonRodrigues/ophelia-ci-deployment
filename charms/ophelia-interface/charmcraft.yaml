@@ -1,0 +1,23 @@
+name: ophelia-ci-interface
+
+type: charm
+
+base: ubuntu@24.04
+
+platforms:
+  amd64:
+
+summary: A interface for ophelia-ci-server.
+
+description: |
+  This snap is the interface for the ophelia-ci-server. 
+  If you are running the server and want a friendly graphic user interface, 
+  install and enable this snap. It will run on port 8008.
+
+extensions:
+  - fastapi-framework
+
+requires:
+  ophelia-server:
+    interface: ophelia-interface 
+    limit: 1
