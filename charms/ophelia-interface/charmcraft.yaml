@@ -15,7 +15,7 @@ description: |
   install and enable this snap. It will run on port 8008.
 
 extensions:
-  - fastapi-framework
+  - fas tapi-framework
 
 requires:
   ophelia-server:

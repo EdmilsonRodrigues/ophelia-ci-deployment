@@ -27,8 +27,11 @@ class OpheliaCiServerCharm(paas_charm.go.Charm):
             args: passthrough to CharmBase.
         """
         super().__init__(*args)
-        self.git_repos_storage = ops.Storage("git-repos")
-        self.framework.observe(self.git_repos_storage.on.attached, self._on_git_repos_attached)
+        self.framework.observe(
+            self.on["git-repos"].storage_attached,  # ✅ Correct
+            self._on_git_repos_attached
+        )
+
         self.framework.observe(
             self.on.ophelia_interface_relation_joined, self._on_ophelia_interface_joined
         )

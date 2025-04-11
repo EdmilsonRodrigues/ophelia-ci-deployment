@@ -1,0 +1,22 @@
+bundle: kubernetes
+applications:
+  ophelia-server:
+    charm: ./ophelia-ci-server.charm
+    base: ubuntu@24.04
+    storage:
+      git-repos: 10G,persistent
+    options:
+      kubernetes-service-type: NodePort  # Direct node access
+      kubernetes-service-annotations: |
+        juju.is/external-hostname: localhost
+
+  ophelia-interface:
+    charm: ./ophelia-ci-interface.charm
+    base: ubuntu@24.04
+    options:
+      kubernetes-service-type: NodePort  # Direct node access
+      kubernetes-service-annotations: |
+        juju.is/external-hostname: localhost
+
+relations:
+  - ["ophelia-interface:ophelia-server", "ophelia-server:ophelia-interface"]
