@@ -6,13 +6,27 @@ terraform {
   }
 }
 
+resource "lxd_network" "ophelia" {
+    name = "ophelia"
+
+    config = {
+        "ipv4.address"  = "10.150.19.1/24"
+        "ipv4.nat"      = "true"
+        "ipv6.address"  = "fd42:474b:622d:259d::1/64"
+        "ipv6.nat"      = "true"
+    }
+  
+}
+
 resource "lxd_profile" "ophelia_ci" {
   name = "ophelia_ci"
+
+  depends_on = [ lxd_network.ophelia ]
 
   config = {
     "boot.autostart" = "true"
     "linux.kernel_modules" = "ip_vs,ip_vs_rr,ip_vs_wrr,ip_vs_sh,ip_tables,ip6_tables,netlink_diag,nf_nat,overlay,br_netfilter"
-    "raw.lxc" = "lxc.apparmor.profile=unconfined lxc.mount.auto=proc:rw sys:rw cgroup:rw lxc.cgroup.devices.allow=a lxc.cap.drop="
+    "raw.lxc" = "lxc.apparmor.profile=unconfined\nlxc.mount.auto=proc:rw sys:rw cgroup:rw\nlxc.cgroup.devices.allow=a\nlxc.cap.drop="
     "security.nesting" = "true"
     "security.privileged" = "true"
   }
@@ -78,21 +92,12 @@ resource "lxd_profile" "ophelia_ci" {
   }
 }
 
-resource "lxd_network" "ophelia" {
-    name = "ophelia"
-
-    config = {
-        "ipv4.address"  = "10.150.19.1/24"
-        "ipv4.nat"      = "true"
-        "ipv6.address"  = "fd42:474b:622d:259d::1/64"
-        "ipv6.nat"      = "true"
-    }
-  
-}
-
 resource "lxd_instance" "base" {
   name      = var.container_name
   image     = var.container_image
   profiles  = var.container_profiles
+
   ephemeral = false
+
+  depends_on = [ lxd_profile.ophelia_ci ]
 }
